@@ -50,13 +50,16 @@ public class HomePieceOfFurniture extends HomeObject implements PieceOfFurniture
    * The properties of a piece of furniture that may change. <code>PropertyChangeListener</code>s added 
    * to a piece of furniture will be notified under a property name equal to the string value of one these properties.
    */
+  // added volume
   public enum Property {NAME, NAME_VISIBLE, NAME_X_OFFSET, NAME_Y_OFFSET, NAME_STYLE, NAME_ANGLE,
-      DESCRIPTION, PRICE, WIDTH, DEPTH, HEIGHT, COLOR, TEXTURE, MODEL_MATERIALS, SHININESS, VISIBLE, X, Y, ELEVATION, ANGLE, MODEL_MIRRORED, MOVABLE, LEVEL};
+      DESCRIPTION, PRICE, WIDTH, DEPTH, HEIGHT, VOLUME, COLOR, TEXTURE, MODEL_MATERIALS, SHININESS, VISIBLE, X, Y, ELEVATION, ANGLE, MODEL_MIRRORED, MOVABLE, LEVEL};
   
   /** 
    * The properties on which home furniture may be sorted.  
    */
-  public enum SortableProperty {CATALOG_ID, NAME, WIDTH, DEPTH, HEIGHT, MOVABLE, 
+
+  // added volume
+  public enum SortableProperty {CATALOG_ID, NAME, WIDTH, DEPTH, HEIGHT, VOLUME, MOVABLE,
                                 DOOR_OR_WINDOW, COLOR, TEXTURE, VISIBLE, X, Y, ELEVATION, ANGLE,
                                 PRICE, VALUE_ADDED_TAX, VALUE_ADDED_TAX_PERCENTAGE, PRICE_VALUE_ADDED_TAX_INCLUDED, LEVEL};
   private static final Map<SortableProperty, Comparator<HomePieceOfFurniture>> SORTABLE_PROPERTY_COMPARATORS;
@@ -107,6 +110,11 @@ public class HomePieceOfFurniture extends HomeObject implements PieceOfFurniture
           return HomePieceOfFurniture.compare(piece1.depth, piece2.depth);
         }
       });
+    SORTABLE_PROPERTY_COMPARATORS.put(SortableProperty.VOLUME, new Comparator<HomePieceOfFurniture>(){
+      public int compare(HomePieceOfFurniture piece1, HomePieceOfFurniture piece2){
+        return HomePieceOfFurniture.compare(piece1.getVolume(), piece2.getVolume());
+      }
+    });
     SORTABLE_PROPERTY_COMPARATORS.put(SortableProperty.MOVABLE, new Comparator<HomePieceOfFurniture>() {
         public int compare(HomePieceOfFurniture piece1, HomePieceOfFurniture piece2) {
           return HomePieceOfFurniture.compare(piece1.movable, piece2.movable);
@@ -586,6 +594,13 @@ public class HomePieceOfFurniture extends HomeObject implements PieceOfFurniture
     } else {
       throw new IllegalStateException("Piece isn't resizable");
     }
+  }
+
+  /**
+   * Returns the volume of this piece of furniture.
+   */
+  public float getVolume(){
+    return getWidth() * getHeight() * getDepth();
   }
 
   /**

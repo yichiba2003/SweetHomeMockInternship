@@ -80,6 +80,7 @@ public class HomeFurniturePanel extends JPanel implements DialogView {
   private JSpinner                depthSpinner;
   private JLabel                  heightLabel;
   private JSpinner                heightSpinner;
+  private JLabel                  volumeLabel;
   private JCheckBox               keepProportionsCheckBox;
   private NullableCheckBox        mirroredModelCheckBox;
   private JRadioButton            defaultColorAndTextureRadioButton;
@@ -464,6 +465,29 @@ public class HomeFurniturePanel extends JPanel implements DialogView {
           }
         });
     }
+
+    this.volumeLabel = new JLabel(SwingTools.getLocalizedLabelText(preferences, HomeFurniturePanel.class,
+            "volumeLabel.text", unitName));
+    final PropertyChangeListener volumeChangeListener = new PropertyChangeListener(){
+      public void propertyChange(PropertyChangeEvent ev){
+        Float height = controller.getHeight();
+        Float depth = controller.getDepth();
+        Float width = controller.getWidth();
+
+        if (width != null && height != null && depth != null){
+          float volume = width * height * depth;
+          volumeLabel.setText(preferences.getLengthUnit().getFormat().format(volume) + " " + unitName + "³");
+        }else{
+          volumeLabel.setText("");
+        }
+      }
+    };
+
+    volumeChangeListener.propertyChange(null);
+    controller.addPropertyChangeListener(HomeFurnitureController.Property.WIDTH, volumeChangeListener);
+    controller.addPropertyChangeListener(HomeFurnitureController.Property.HEIGHT, volumeChangeListener);
+    controller.addPropertyChangeListener(HomeFurnitureController.Property.DEPTH, volumeChangeListener);
+
     
     if (controller.isPropertyEditable(HomeFurnitureController.Property.PROPORTIONAL)) {
       // Create keep proportions check box bound to PROPORTIONAL controller property
@@ -1007,6 +1031,11 @@ public class HomeFurniturePanel extends JPanel implements DialogView {
       sizePanel.add(this.heightSpinner, new GridBagConstraints(
           1, 2, 1, 1, 0, 0, GridBagConstraints.LINE_START, 
           GridBagConstraints.NONE, rightComponentInsets, -10, 0));
+    }
+    if (this.volumeLabel != null){
+      sizePanel.add(this.volumeLabel, new GridBagConstraints(
+              0, 3, 2, 1, 0, 0, labelAlignment,
+              GridBagConstraints.NONE, labelInsets, 0, 0));
     }
     if (this.keepProportionsCheckBox != null) {
       sizePanel.add(this.keepProportionsCheckBox, new GridBagConstraints(

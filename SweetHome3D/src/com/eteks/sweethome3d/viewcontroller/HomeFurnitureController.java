@@ -953,7 +953,17 @@ public class HomeFurnitureController implements Controller {
   public Float getHeight() {
     return this.height;
   }
-  
+
+  /**
+   * Returns the new volume with edited height, width, and depth
+   */
+  public Float getVolume() {
+    if(getWidth() != null && getHeight() != null && getDepth() != null){
+      return getWidth() * getHeight() * getDepth();
+    }
+    return null;
+  }
+
   /**
    * Sets whether furniture proportions should be kept.
    */
